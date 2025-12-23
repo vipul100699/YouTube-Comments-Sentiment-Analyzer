@@ -2,3 +2,6 @@ numpy
 pandas
 seaborn
 matplotlib
+nltk
+scikit-learn
+wordcloud

@@ -14,3 +14,4 @@ data/
 
 
 .env
+/experiment_info.json

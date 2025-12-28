@@ -1,0 +1,4 @@
+2025-12-28 14:19:44,693 - model_building - ERROR - Failed to apply TF-IDF vectorization due to some unexpected error: The 'ngram_range' parameter of TfidfVectorizer must be an instance of 'tuple'. Got [1, 3] instead.
+2025-12-28 14:19:44,694 - model_building - ERROR - Failed to complete the model building process: The 'ngram_range' parameter of TfidfVectorizer must be an instance of 'tuple'. Got [1, 3] instead.
+2025-12-28 14:21:26,376 - model_building - ERROR - Failed to apply TF-IDF vectorization due to some unexpected error: The 'ngram_range' parameter of TfidfVectorizer must be an instance of 'tuple'. Got '(1, 3)' instead.
+2025-12-28 14:21:26,377 - model_building - ERROR - Failed to complete the model building process: The 'ngram_range' parameter of TfidfVectorizer must be an instance of 'tuple'. Got '(1, 3)' instead.

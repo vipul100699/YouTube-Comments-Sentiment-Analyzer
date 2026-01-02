@@ -1,3 +1,10 @@
+# [DOCKER DESKTOP]
+# This Dockerfile is compatible with Docker Desktop as-is.
+# To build locally:
+#   docker build -t youtube-comment-analyzer .
+# To run locally:
+#   docker run -p 5000:5000 youtube-comment-analyzer
+
 FROM python:3.11-slim-buster
 
 WORKDIR /app

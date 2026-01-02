@@ -1,6 +1,16 @@
 import matplotlib
 matplotlib.use('Agg') # Use non-interactive backend before importing pyplot
 
+"""
+YouTube Comment Analyzer Flask API
+==================================
+
+This module provides a Flask API for analyzing the sentiment of YouTube comments.
+It includes endpoints for:
+- Predicting sentiment of comments.
+- Generating visualizations like sentiment distribution charts, word clouds, and trend graphs.
+"""
+
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import io
@@ -75,6 +85,16 @@ def preprocess_comment(comment):
     
 # To load the model and vectorizer from local
 def load_model_and_vectorizer_from_local(model_path, vectorizer_path):
+    """
+    Load the trained model and vectorizer from local storage.
+
+    Args:
+        model_path (str): Path to the pickled model file.
+        vectorizer_path (str): Path to the pickled vectorizer file.
+
+    Returns:
+        tuple: Loaded model and vectorizer objects.
+    """
     with open(model_path, 'rb') as f:
         model = pickle.load(f)
     
@@ -88,10 +108,27 @@ model, vectorizer = load_model_and_vectorizer_from_local(model_path='lgbm_model.
 
 @app.route('/')
 def home():
+    """
+    Home route to verify if the API is running.
+
+    Returns:
+        str: Welcome message.
+    """
     return "Welcome to the YouTube Comment Analyzer Flask API!"
 
 @app.route('/predict', methods=['POST'])
 def predict():
+    """
+    Predict sentiment for a list of comments.
+
+    Expected JSON Input:
+        {
+            "comments": ["comment1", "comment2", ...]
+        }
+
+    Returns:
+        JSON response containing the original comments and their predicted sentiments.
+    """
     data = request.json
     comments = data.get('comments')
     
@@ -123,6 +160,20 @@ def predict():
 
 @app.route('/predict_with_timestamps', methods=['POST'])
 def predict_with_timestamps():
+    """
+    Predict sentiment for a list of comments with timestamps.
+
+    Expected JSON Input:
+        {
+            "comments": [
+                {"text": "comment1", "timestamp": "2023-01-01..."},
+                ...
+            ]
+        }
+
+    Returns:
+        JSON response containing comments, predicted sentiments, and timestamps.
+    """
     data = request.json
     comments_data = data.get('comments')
     
@@ -156,6 +207,21 @@ def predict_with_timestamps():
 
 
 def generate_chart():
+    """
+    Generate a pie chart of sentiment distribution.
+
+    Expected JSON Input:
+        {
+            "sentiment_counts": {
+                "1": count_positive,
+                "0": count_neutral,
+                "-1": count_negative
+            }
+        }
+
+    Returns:
+        Image (PNG): Pie chart of the sentiment distribution.
+    """
     try:
         data = request.get_json()
         sentiment_counts = data.get('sentiment_counts')
@@ -202,6 +268,17 @@ def generate_chart():
 
 @app.route('/generate_wordcloud', methods=['POST'])
 def generate_wordcloud():
+    """
+    Generate a word cloud from a list of comments.
+
+    Expected JSON Input:
+        {
+            "comments": ["comment1", "comment2", ...]
+        }
+
+    Returns:
+        Image (PNG): Word cloud generated from the comments.
+    """
     try:
         data = request.get_json()
         comments = data.get('comments')
@@ -239,6 +316,20 @@ def generate_wordcloud():
 
 @app.route('/generate_trend_graph', methods=['POST'])
 def generate_trend_graph():
+    """
+    Generate a trend graph of sentiment over time.
+
+    Expected JSON Input:
+        {
+            "sentiment_data": [
+                {"sentiment": 1, "timestamp": "2023-01-01..."},
+                ...
+            ]
+        }
+
+    Returns:
+        Image (PNG): Line graph showing sentiment percentages over time.
+    """
     try:
         data = request.get_json()
         sentiment_data = data.get('sentiment_data')

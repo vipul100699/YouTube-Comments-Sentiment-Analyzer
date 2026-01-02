@@ -6,6 +6,19 @@ from sklearn.model_selection import train_test_split
 import yaml
 import logging
 
+"""
+Data Ingestion Module
+=====================
+
+This module is responsible for:
+1. Loading configuration parameters.
+2. Ingesting raw data from a remote URL.
+3. Preprocessing the raw data (cleaning, duplicate removal).
+4. Splitting the data into training and testing sets.
+5. Saving the processed datasets to the local file system.
+"""
+
+
 # Logging Configuration
 logger = logging.getLogger('data_ingestion')
 logger.setLevel(logging.DEBUG)
@@ -24,7 +37,15 @@ logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
 def load_params(params_path: str) -> dict:
-    """Load parameters from a YAML file."""
+    """
+    Load parameters from a YAML file.
+
+    Args:
+        params_path (str): The file path to the YAML configuration file.
+
+    Returns:
+        dict: A dictionary containing the configuration parameters.
+    """
     try:
         with open(params_path, 'r') as f:
             params = yaml.safe_load(f)
@@ -42,7 +63,15 @@ def load_params(params_path: str) -> dict:
         raise
 
 def load_data(data_url: str) -> pd.DataFrame:
-    """ Load data from a CSV file."""
+    """
+    Load data from a CSV file.
+
+    Args:
+        data_url (str): The URL or path to the CSV data file.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the loaded data.
+    """
     try:
         df = pd.read_csv(data_url)
         logger.debug(f"Data loaded successfully from {data_url}")
@@ -55,7 +84,15 @@ def load_data(data_url: str) -> pd.DataFrame:
         raise
 
 def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
-    """Preprocess the data by handling missing data, duplicates and empty strings."""
+    """
+    Preprocess the data by handling missing data, duplicates and empty strings.
+
+    Args:
+        df (pd.DataFrame): The raw dataframe.
+
+    Returns:
+        pd.DataFrame: The cleaned dataframe.
+    """
     try:
         # Removing missing values.
         df = df.dropna()
@@ -74,7 +111,14 @@ def preprocess_data(df: pd.DataFrame) -> pd.DataFrame:
         raise
 
 def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str) -> None:
-    """Save the train and test datasets, creating the raw folder if it doesn't exist."""
+    """
+    Save the train and test datasets, creating the raw folder if it doesn't exist.
+
+    Args:
+        train_data (pd.DataFrame): The training dataset.
+        test_data (pd.DataFrame): The testing dataset.
+        data_path (str): The base path where the 'raw' directory will be created.
+    """
     try:
         raw_data_path = os.path.join(data_path, 'raw')
 
@@ -91,6 +135,16 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str)
         raise
 
 def main():
+    """
+    Main function to execute the data ingestion pipeline.
+    
+    This function:
+    - Loads parameters.
+    - Loads data from source.
+    - Preprocesses the data.
+    - Splits data into train and test sets.
+    - Saves the datasets locally.
+    """
     try:
         # Load parameters from params.yml in the root directory
         params = load_params(params_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../params.yaml'))

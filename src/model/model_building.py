@@ -7,6 +7,18 @@ import logging
 import lightgbm as lgb
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+"""
+Model Building Module
+======================
+
+This module is responsible for:
+1. Loading configuration parameters.
+2. Loading and preprocessing data.
+3. Vectorizing text data using TF-IDF.
+4. Training a LightGBM classifier.
+5. Saving the trained model and vectorizer.
+"""
+
 # Logging Configuration
 logger = logging.getLogger('model_building')
 logger.setLevel(logging.DEBUG)
@@ -25,7 +37,15 @@ logger.addHandler(console_handler)
 logger.addHandler(file_handler)
 
 def load_params(params_path: str) -> dict:
-    """Load parameters from a YAML file."""
+    """
+    Load parameters from a YAML file.
+
+    Args:
+        params_path (str): The file path to the YAML configuration file.
+
+    Returns:
+        dict: A dictionary containing the configuration parameters.
+    """
     try:
         with open(params_path, 'r') as f:
             params = yaml.safe_load(f)
@@ -43,7 +63,15 @@ def load_params(params_path: str) -> dict:
         raise
 
 def load_data(file_path: str) -> pd.DataFrame:
-    """Load data from a CSV file."""
+    """
+    Load data from a CSV file.
+
+    Args:
+        file_path (str): The file path to the CSV data file.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the loaded data.
+    """
     try:
         df = pd.read_csv(file_path)
         df.fillna('', inplace=True) # Fill missing values with empty string.
@@ -57,7 +85,17 @@ def load_data(file_path: str) -> pd.DataFrame:
         raise
 
 def apply_tfidf(train_data: pd.DataFrame, max_features: int, ngram_range: tuple) -> tuple:
-    """Apply TF-IDF vectorization to the training data."""
+    """
+    Apply TF-IDF vectorization to the training data.
+
+    Args:
+        train_data (pd.DataFrame): The training data containing 'clean_comment' and 'category'.
+        max_features (int): The maximum number of features for TF-IDF.
+        ngram_range (tuple): The range of n-values for different n-grams.
+
+    Returns:
+        tuple: A tuple containing the transformed training data (sparse matrix) and the target labels.
+    """
     try:
         vectorizer = TfidfVectorizer(max_features=max_features, ngram_range=ngram_range)
         X_train = train_data['clean_comment'].values
@@ -80,7 +118,19 @@ def apply_tfidf(train_data: pd.DataFrame, max_features: int, ngram_range: tuple)
 
 
 def train_lgbm(X_train: np.ndarray, y_train: np.ndarray, learning_rate: float, max_depth: int, n_estimators: int) -> lgb.LGBMClassifier:
-    """Train a LightGBM classifier."""
+    """
+    Train a LightGBM classifier.
+
+    Args:
+        X_train (np.ndarray): The training features.
+        y_train (np.ndarray): The training labels.
+        learning_rate (float): The learning rate for the model.
+        max_depth (int): The maximum depth of the trees.
+        n_estimators (int): The number of boosting iterations.
+
+    Returns:
+        lgb.LGBMClassifier: The trained LightGBM model.
+    """
     try:
         best_model = lgb.LGBMClassifier(
             objective='multiclass',
@@ -104,7 +154,13 @@ def train_lgbm(X_train: np.ndarray, y_train: np.ndarray, learning_rate: float, m
 
 
 def save_model(model: lgb.LGBMClassifier, model_path: str) -> None:
-    """Save the trained model to a file."""
+    """
+    Save the trained model to a file using pickle.
+
+    Args:
+        model (lgb.LGBMClassifier): The trained model to save.
+        model_path (str): The file path where the model should be saved.
+    """
     try:
         with open(model_path, 'wb') as f:
             pickle.dump(model, f)
@@ -115,7 +171,12 @@ def save_model(model: lgb.LGBMClassifier, model_path: str) -> None:
 
 
 def get_root_directory() -> str:
-    """Get the root directory of the project."""
+    """
+    Get the root directory of the project.
+
+    Returns:
+        str: Absolute path to the project root directory.
+    """
     current_dir = os.path.dirname(os.path.abspath(__file__))
     return os.path.abspath(os.path.join(current_dir, '../../'))
 

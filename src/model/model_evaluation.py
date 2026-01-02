@@ -14,6 +14,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from mlflow.models import infer_signature
 
+"""
+Model Evaluation Module
+=======================
+
+This module is responsible for:
+1. Loading the test data and trained model.
+2. Evaluating the model using classification metrics and confusion matrix.
+3. Logging metrics, artifacts, and model signature to MLflow.
+4. Saving model information for the registration step.
+"""
+
+
 
 # Logging Configuration
 logger = logging.getLogger('model_building')
@@ -34,7 +46,15 @@ logger.addHandler(file_handler)
 
 
 def load_data(file_path: str) -> pd.DataFrame:
-    """Load data from a CSV file."""
+    """
+    Load data from a CSV file.
+
+    Args:
+        file_path (str): The file path to the CSV data file.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the loaded data.
+    """
     try:
         df = pd.read_csv(file_path)
         df.fillna('', inplace=True) # Fill missing values with empty string.
@@ -49,7 +69,15 @@ def load_data(file_path: str) -> pd.DataFrame:
 
 
 def load_model(model_path: str):
-    """Load the trained model from a file."""
+    """
+    Load the trained model from a file.
+
+    Args:
+        model_path (str): The file path to the pickled model.
+
+    Returns:
+        The loaded model object.
+    """
     try:
         with open(model_path, 'rb') as f:
             model = pickle.load(f)
@@ -61,7 +89,15 @@ def load_model(model_path: str):
 
 
 def load_vectorizer(vectorizer_path: str) -> TfidfVectorizer:
-    """Load the TF-IDF vectorizer from a file."""
+    """
+    Load the TF-IDF vectorizer from a file.
+
+    Args:
+        vectorizer_path (str): The file path to the pickled vectorizer.
+
+    Returns:
+        TfidfVectorizer: The loaded vectorizer object.
+    """
     try:
         with open(vectorizer_path, 'rb') as f:
             vectorizer = pickle.load(f)
@@ -73,7 +109,15 @@ def load_vectorizer(vectorizer_path: str) -> TfidfVectorizer:
 
 
 def load_params(params_path: str) -> dict:
-    """Load parameters from a YAML file."""
+    """
+    Load parameters from a YAML file.
+
+    Args:
+        params_path (str): The file path to the YAML configuration file.
+
+    Returns:
+        dict: A dictionary containing the configuration parameters.
+    """
     try:
         with open(params_path, 'r') as f:
             params = yaml.safe_load(f)
@@ -85,7 +129,17 @@ def load_params(params_path: str) -> dict:
         raise
 
 def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray):
-    """Evaluate the model and log classification metrics and confusion matrix."""
+    """
+    Evaluate the model and log classification metrics and confusion matrix.
+
+    Args:
+        model: The trained model to evaluate.
+        X_test (np.ndarray): The test features.
+        y_test (np.ndarray): The test labels.
+
+    Returns:
+        tuple: A dictionary regarding the classification report, the confusion matrix, and the accuracy score.
+    """
     try:
         # Predict and calculate classification metrics
         y_pred = model.predict(X_test)
@@ -116,7 +170,13 @@ def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray):
 
 
 def log_confusion_matrix(cm, dataset_name):
-    """Log the confusion matrix as an image artifact."""
+    """
+    Log the confusion matrix as an image artifact.
+
+    Args:
+        cm: The confusion matrix to plot.
+        dataset_name (str): The name of the dataset (e.g., 'Test Data') for the plot title.
+    """
     try:
         plt.figure(figsize=(10, 7))
         sns.heatmap(cm, annot=True, fmt='d', cmap='Blues')
@@ -134,7 +194,14 @@ def log_confusion_matrix(cm, dataset_name):
 
 
 def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
-    """Save the model information to a JSON file."""
+    """
+    Save the model information to a JSON file.
+
+    Args:
+        run_id (str): The MLflow run ID.
+        model_path (str): The path to the model within the MLflow run.
+        file_path (str): The file path where the information should be saved.
+    """
     try:
         # Create a dictionary with the info to save.
         model_info = {
@@ -152,7 +219,15 @@ def save_model_info(run_id: str, model_path: str, file_path: str) -> None:
 
 
 def main():
-    """Main function to e   valuate the model."""
+    """
+    Main function to evaluate the model.
+    
+    This function:
+    - Loads parameters, model, and vectorizer.
+    - Prepares test data.
+    - Infers model signature.
+    - Logs model, metrics, and artifacts to MLflow.
+    """
     load_dotenv()
     mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
     mlflow.set_tracking_uri(mlflow_tracking_uri)

@@ -4,6 +4,17 @@ import os
 from dotenv import load_dotenv
 import json
 
+"""
+Model Registration Module
+=========================
+
+This module is responsible for:
+1. Loading model information (run ID, model path) from a JSON file.
+2. Registering the trained model to the MLflow Model Registry.
+3. Transitioning the model version to the "Staging" stage.
+"""
+
+
 load_dotenv()
 
 mlflow_tracking_uri = os.getenv("MLFLOW_TRACKING_URI")
@@ -28,7 +39,15 @@ logger.addHandler(file_handler)
 
 
 def load_model_info(file_path: str) -> dict:
-    """Load the model information from a JSON file."""
+    """
+    Load the model information from a JSON file.
+
+    Args:
+        file_path (str): The file path to the JSON file containing model info.
+
+    Returns:
+        dict: A dictionary containing the model information.
+    """
     try:
         with open(file_path, 'r') as f:
             model_info = json.load(f)
@@ -42,7 +61,13 @@ def load_model_info(file_path: str) -> dict:
         raise
 
 def register_model(model_name: str, model_info: dict):
-    """Register the model to the MLFlow Model Registry."""
+    """
+    Register the model to the MLFlow Model Registry.
+
+    Args:
+        model_name (str): The name to assign to the registered model.
+        model_info (dict): A dictionary containing 'run_id' and 'model_path'.
+    """
     try:
         model_uri = f"runs:/{model_info['run_id']}/{model_info['model_path']}"
 
@@ -64,7 +89,12 @@ def register_model(model_name: str, model_info: dict):
 
 
 def main():
-    """Main function to register the model."""
+    """
+    Main function to register the model.
+
+    This function loads the model info and registers it to MLflow,
+    transitioning it to the 'Staging' stage.
+    """
     try:
         # Load the model information from the JSON file
         model_info_path = 'experiment_info.json'

@@ -8,6 +8,16 @@ from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 import logging
 
+"""
+Data Preprocessing Module
+=========================
+
+This module is responsible for:
+1. Normalizing the text data (cleaning, lemmatization, stopword removal).
+2. Saving the preprocessed data to the 'interim' directory for model building.
+"""
+
+
 # Logging Configuration
 logger = logging.getLogger('data_ingestion')
 logger.setLevel(logging.DEBUG)
@@ -27,7 +37,15 @@ logger.addHandler(file_handler)
 
 # Define the preprocessing function
 def preprocess_comment(comment: str) -> str:
-    """Apply preprocessing transformations to a comment."""
+    """
+    Apply preprocessing transformations to a comment.
+
+    Args:
+        comment (str): The original comment text.
+
+    Returns:
+        str: The preprocessed comment.
+    """
     try:
         # Convert the comment to lowercase
         comment = comment.lower()
@@ -55,7 +73,15 @@ def preprocess_comment(comment: str) -> str:
         raise
 
 def normalize_text(df: pd.DataFrame) -> pd.DataFrame:
-    """Normalize the text data in the dataframe."""
+    """
+    Normalize the text data in the dataframe by applying preprocessing to the 'clean_comment' column.
+
+    Args:
+        df (pd.DataFrame): The dataframe containing the comments.
+
+    Returns:
+        pd.DataFrame: The dataframe with the normalized 'clean_comment' column.
+    """
     try:
         # Apply the preprocessing function to the 'clean_comment' column
         df['clean_comment'] = df['clean_comment'].apply(preprocess_comment)
@@ -66,7 +92,14 @@ def normalize_text(df: pd.DataFrame) -> pd.DataFrame:
         raise
 
 def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str) -> None:
-    """Save the train and test datasets, creating the raw folder if it doesn't exist."""
+    """
+    Save the train and test datasets, creating the interim folder if it doesn't exist.
+
+    Args:
+        train_data (pd.DataFrame): The preprocessed training dataset.
+        test_data (pd.DataFrame): The preprocessed testing dataset.
+        data_path (str): The base path where the 'interim' directory will be created.
+    """
     try:
         interim_data_path = os.path.join(data_path, 'interim')
         logger.debug(f"Creating directory: {interim_data_path}")
@@ -85,6 +118,14 @@ def save_data(train_data: pd.DataFrame, test_data: pd.DataFrame, data_path: str)
         raise
 
 def main():
+    """
+    Main function to execute the data preprocessing pipeline.
+    
+    This function:
+    - Loads raw train and test data.
+    - Normalizes the text data.
+    - Saves the preprocessed data to the interim folder.
+    """
     try:
         logger.debug("Started data preprocessing.")
 

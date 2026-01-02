@@ -1,4 +1,5 @@
 stages:
+  # Data Ingestion Stage: Downloads and saves raw data
   data_ingestion:
     cmd: python src/data/data_ingestion.py
     deps:
@@ -8,6 +9,7 @@ stages:
     outs:
     - data/raw
 
+  # Data Preprocessing Stage: Cleans and normalizes the data
   data_preprocessing:
     cmd: python src/data/data_preprocessing.py
     deps:
@@ -17,6 +19,7 @@ stages:
     outs:
     - data/interim  
 
+  # Model Building Stage: Trains the LightGBM model
   model_building:
     cmd: python src/model/model_building.py
     deps:
@@ -32,6 +35,7 @@ stages:
     - lgbm_model.pkl
     - tfidf_vectorizer.pkl
 
+  # Model Evaluation Stage: Evaluates the model and logs metrics to MLflow
   model_evaluation:
     cmd: python src/model/model_evaluation.py
     deps:
@@ -43,6 +47,7 @@ stages:
     outs:
     - experiment_info.json
 
+  # Model Registration Stage: Registers the model to MLflow Model Registry
   model_registration:
     cmd: python src/model/register_model.py
     deps:
